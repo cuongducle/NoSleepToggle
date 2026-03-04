@@ -43,6 +43,22 @@ DMG output:
 
 `/Users/cuong/workspace/NoSleepToggle/release/NoSleepToggle.dmg`
 
+## Unsigned DMG (no paid Apple Developer account)
+
+You can still build and share the DMG, but macOS Gatekeeper will warn on first launch.
+
+First open flow on the target Mac:
+
+1. Mount DMG and drag `NoSleepToggle.app` to `Applications`.
+2. In Finder, right-click the app and choose `Open`.
+3. If blocked, go to `System Settings > Privacy & Security` and click `Open Anyway`.
+
+Optional terminal workaround (advanced users):
+
+```bash
+xattr -dr com.apple.quarantine /Applications/NoSleepToggle.app
+```
+
 ## Sign + notarize DMG (Developer ID)
 
 Prerequisites:
