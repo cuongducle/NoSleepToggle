@@ -1,39 +1,54 @@
 # NoSleepToggle
 
-Menu bar app to toggle:
+Small macOS menu bar app to quickly turn `No Sleep` on/off.
 
-`sudo pmset -a disablesleep 1` / `0`
+When ON, the app applies:
+- `pmset -a disablesleep 1`
+- `caffeinate -dimsu` (Awake Guard)
 
-## Build app bundle
+When OFF, it restores:
+- `pmset -a disablesleep 0`
+- stops Awake Guard
+
+## Quick Install (recommended)
+
+1. Download latest `.dmg` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
+2. Open DMG and drag `NoSleepToggle.app` into `Applications`.
+3. Open app and click the menu bar icon (top-right).
+
+Menu actions:
+- `Turn On No Sleep (set 1)`
+- `Turn Off No Sleep (set 0)`
+- `Refresh status`
+- `Quit`
+
+## First Launch Warning (unsigned app)
+
+This project currently ships as unsigned/not-notarized builds.
+
+If macOS blocks launch:
+1. Right-click `NoSleepToggle.app` in Finder -> `Open`.
+2. If still blocked: `System Settings > Privacy & Security` -> `Open Anyway`.
+
+Optional terminal workaround:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/NoSleepToggle.app
+```
+
+## Build From Source
 
 ```bash
 cd /Users/cuong/workspace/NoSleepToggle
 chmod +x scripts/build_app.sh
 ./scripts/build_app.sh
-```
-
-`build_app.sh` auto-generates and embeds app icon (`assets/NoSleepToggle.icns`) if missing.
-
-App output:
-
-`/Users/cuong/workspace/NoSleepToggle/dist/NoSleepToggle.app`
-
-## Run
-
-```bash
 open /Users/cuong/workspace/NoSleepToggle/dist/NoSleepToggle.app
 ```
 
-You will see an icon on the right side of the top bar. Click it to:
+Output app:
+- `/Users/cuong/workspace/NoSleepToggle/dist/NoSleepToggle.app`
 
-- Turn On No Sleep (set 1)
-- Turn Off No Sleep (set 0)
-- Refresh status
-- Quit
-
-The toggle action prompts for admin password via macOS.
-
-## Build DMG installer
+## Build DMG
 
 ```bash
 cd /Users/cuong/workspace/NoSleepToggle
@@ -41,35 +56,16 @@ chmod +x scripts/create_dmg.sh
 ./scripts/create_dmg.sh
 ```
 
-DMG output:
+Output DMG:
+- `/Users/cuong/workspace/NoSleepToggle/release/NoSleepToggle.dmg`
 
-`/Users/cuong/workspace/NoSleepToggle/release/NoSleepToggle.dmg`
-
-## Unsigned DMG (no paid Apple Developer account)
-
-You can still build and share the DMG, but macOS Gatekeeper will warn on first launch.
-
-First open flow on the target Mac:
-
-1. Mount DMG and drag `NoSleepToggle.app` to `Applications`.
-2. In Finder, right-click the app and choose `Open`.
-3. If blocked, go to `System Settings > Privacy & Security` and click `Open Anyway`.
-
-Optional terminal workaround (advanced users):
-
-```bash
-xattr -dr com.apple.quarantine /Applications/NoSleepToggle.app
-```
-
-## Sign + notarize DMG (Developer ID)
+## Optional: Sign + Notarize (paid Apple Developer account)
 
 Prerequisites:
+- `Developer ID Application` certificate in keychain
+- notary profile configured with `notarytool`
 
-- Apple Developer Program account
-- Developer ID Application certificate installed in your keychain
-- Notary profile saved with `notarytool`
-
-Store notary credentials once:
+Store credentials once:
 
 ```bash
 xcrun notarytool store-credentials "NoSleepNotary" \
@@ -77,7 +73,7 @@ xcrun notarytool store-credentials "NoSleepNotary" \
   --team-id "YOUR_TEAM_ID"
 ```
 
-Run signing + notarization:
+Run signing pipeline:
 
 ```bash
 cd /Users/cuong/workspace/NoSleepToggle
