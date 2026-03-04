@@ -8,3 +8,5 @@ DerivedData/
 .netrc
 /dist
 /release
+/assets/*.iconset
+/assets/icon_1024.png

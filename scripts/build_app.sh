@@ -7,8 +7,13 @@ BUILD_DIR="$ROOT_DIR/.build/release"
 APP_DIR="$ROOT_DIR/dist/$APP_NAME.app"
 BIN_DIR="$APP_DIR/Contents/MacOS"
 RES_DIR="$APP_DIR/Contents/Resources"
+ICON_PATH="$ROOT_DIR/assets/$APP_NAME.icns"
 
 cd "$ROOT_DIR"
+if [[ ! -f "$ICON_PATH" ]]; then
+  "$ROOT_DIR/scripts/generate_icon.sh"
+fi
+
 swift build -c release
 
 rm -rf "$APP_DIR"
@@ -16,6 +21,7 @@ mkdir -p "$BIN_DIR" "$RES_DIR"
 
 cp "$BUILD_DIR/$APP_NAME" "$BIN_DIR/$APP_NAME"
 chmod +x "$BIN_DIR/$APP_NAME"
+cp "$ICON_PATH" "$RES_DIR/$APP_NAME.icns"
 
 cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -30,6 +36,8 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
     <string>com.cuong.nosleeptoggle</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
+    <key>CFBundleIconFile</key>
+    <string>NoSleepToggle</string>
     <key>CFBundleName</key>
     <string>NoSleepToggle</string>
     <key>CFBundlePackageType</key>

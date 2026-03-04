@@ -12,6 +12,8 @@ chmod +x scripts/build_app.sh
 ./scripts/build_app.sh
 ```
 
+`build_app.sh` auto-generates and embeds app icon (`assets/NoSleepToggle.icns`) if missing.
+
 App output:
 
 `/Users/cuong/workspace/NoSleepToggle/dist/NoSleepToggle.app`
