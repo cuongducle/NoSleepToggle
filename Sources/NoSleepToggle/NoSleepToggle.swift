@@ -220,7 +220,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             case .off:
                 symbol = "moon.zzz"
             case .unknown:
-                symbol = "questionmark.circle"
+                symbol = "moon.zzz"
             }
             button.image = NSImage(systemSymbolName: symbol, accessibilityDescription: "No Sleep")
         }
