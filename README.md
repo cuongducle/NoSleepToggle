@@ -1,6 +1,7 @@
 # NoSleepToggle
 
 Small macOS menu bar app to quickly turn `No Sleep` on/off.
+The menu now always shows a simple `ON/OFF` state (no `UNKNOWN` label).
 
 When ON, the app applies:
 - `pmset -a disablesleep 1`
@@ -17,8 +18,7 @@ When OFF, it restores:
 3. Open app and click the menu bar icon (top-right).
 
 Menu actions:
-- `Turn On No Sleep (set 1)`
-- `Turn Off No Sleep (set 0)`
+- `No Sleep: ON/OFF` (single toggle button)
 - `Refresh status`
 - `Quit`
 

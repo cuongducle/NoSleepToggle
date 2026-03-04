@@ -10,11 +10,7 @@ enum SleepState {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    private let stateItem = NSMenuItem(title: "Status: Unknown", action: nil, keyEquivalent: "")
-    private let awakeGuardItem = NSMenuItem(title: "Awake Guard: OFF", action: nil, keyEquivalent: "")
-    private let turnOnItem = NSMenuItem(title: "Turn On No Sleep (set 1)", action: #selector(turnOnNoSleep), keyEquivalent: "")
-    private let turnOffItem = NSMenuItem(title: "Turn Off No Sleep (set 0)", action: #selector(turnOffNoSleep), keyEquivalent: "")
-    private let toggleItem = NSMenuItem(title: "Toggle", action: #selector(toggleSleep), keyEquivalent: "t")
+    private let toggleItem = NSMenuItem(title: "No Sleep: UNKNOWN", action: #selector(toggleSleep), keyEquivalent: "t")
     private var caffeinateProcess: Process?
 
     private var sleepState: SleepState = .unknown {
@@ -39,13 +35,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let menu = NSMenu()
-        stateItem.isEnabled = false
-        awakeGuardItem.isEnabled = false
-        menu.addItem(stateItem)
-        menu.addItem(awakeGuardItem)
-        menu.addItem(.separator())
-        menu.addItem(turnOnItem)
-        menu.addItem(turnOffItem)
         menu.addItem(toggleItem)
         menu.addItem(NSMenuItem(title: "Refresh status", action: #selector(refreshStatusAction), keyEquivalent: "r"))
         menu.addItem(.separator())
@@ -68,14 +57,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             targetValue = 1
         }
         setDisableSleep(targetValue)
-    }
-
-    @objc private func turnOnNoSleep() {
-        setDisableSleep(1)
-    }
-
-    @objc private func turnOffNoSleep() {
-        setDisableSleep(0)
     }
 
     private func setDisableSleep(_ targetValue: Int) {
@@ -110,7 +91,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func refreshStatus() {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
-        process.arguments = ["-g", "custom"]
+        process.arguments = ["-g"]
 
         let output = Pipe()
         process.standardOutput = output
@@ -121,7 +102,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             process.waitUntilExit()
             let data = output.fileHandleForReading.readDataToEndOfFile()
             let text = String(data: data, encoding: .utf8) ?? ""
-            sleepState = parseDisableSleep(from: text)
+            sleepState = parseSleepDisabled(from: text)
             syncAwakeGuard()
         } catch {
             stopAwakeGuard()
@@ -171,20 +152,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         caffeinateProcess = nil
     }
 
-    private func isAwakeGuardRunning() -> Bool {
-        if let process = caffeinateProcess {
-            return process.isRunning
-        }
-        return false
-    }
-
-    private func parseDisableSleep(from text: String) -> SleepState {
+    private func parseSleepDisabled(from text: String) -> SleepState {
         for line in text.split(separator: "\n") {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("disablesleep") {
+            let lower = trimmed.lowercased()
+            if lower.hasPrefix("sleepdisabled") {
                 let pieces = trimmed.split(whereSeparator: \.isWhitespace)
-                if let last = pieces.last, let value = Int(last) {
-                    return value == 1 ? .on : .off
+                if let last = pieces.last {
+                    if last == "1" {
+                        return .on
+                    }
+                    if last == "0" {
+                        return .off
+                    }
                 }
             }
         }
@@ -194,23 +174,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func updateUI() {
         switch sleepState {
         case .on:
-            stateItem.title = "Status: ON (No Sleep)"
-            toggleItem.title = "Toggle -> Turn Off"
-            turnOnItem.isEnabled = false
-            turnOffItem.isEnabled = true
-        case .off:
-            stateItem.title = "Status: OFF (Allow Sleep)"
-            toggleItem.title = "Toggle -> Turn On"
-            turnOnItem.isEnabled = true
-            turnOffItem.isEnabled = false
-        case .unknown:
-            stateItem.title = "Status: UNKNOWN"
-            toggleItem.title = "Toggle -> Turn On"
-            turnOnItem.isEnabled = true
-            turnOffItem.isEnabled = true
+            toggleItem.title = "No Sleep: ON (Click to turn OFF)"
+        case .off, .unknown:
+            toggleItem.title = "No Sleep: OFF (Click to turn ON)"
         }
-
-        awakeGuardItem.title = isAwakeGuardRunning() ? "Awake Guard: ON (caffeinate)" : "Awake Guard: OFF"
 
         if let button = statusItem.button {
             let symbol: String
