@@ -11,9 +11,11 @@ enum SleepState {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let stateItem = NSMenuItem(title: "Status: Unknown", action: nil, keyEquivalent: "")
+    private let awakeGuardItem = NSMenuItem(title: "Awake Guard: OFF", action: nil, keyEquivalent: "")
     private let turnOnItem = NSMenuItem(title: "Turn On No Sleep (set 1)", action: #selector(turnOnNoSleep), keyEquivalent: "")
     private let turnOffItem = NSMenuItem(title: "Turn Off No Sleep (set 0)", action: #selector(turnOffNoSleep), keyEquivalent: "")
     private let toggleItem = NSMenuItem(title: "Toggle", action: #selector(toggleSleep), keyEquivalent: "t")
+    private var caffeinateProcess: Process?
 
     private var sleepState: SleepState = .unknown {
         didSet {
@@ -26,6 +28,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         refreshStatus()
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        stopAwakeGuard()
+    }
+
     private func setupMenu() {
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "moon.zzz", accessibilityDescription: "No Sleep")
@@ -34,7 +40,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let menu = NSMenu()
         stateItem.isEnabled = false
+        awakeGuardItem.isEnabled = false
         menu.addItem(stateItem)
+        menu.addItem(awakeGuardItem)
         menu.addItem(.separator())
         menu.addItem(turnOnItem)
         menu.addItem(turnOffItem)
@@ -84,10 +92,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if process.terminationStatus == 0 {
                 refreshStatus()
             } else {
+                stopAwakeGuard()
                 sleepState = .unknown
                 showAlert(title: "Cannot update setting", message: "Command failed: \(command)")
             }
         } catch {
+            stopAwakeGuard()
             sleepState = .unknown
             showAlert(title: "Cannot update setting", message: error.localizedDescription)
         }
@@ -112,9 +122,60 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let data = output.fileHandleForReading.readDataToEndOfFile()
             let text = String(data: data, encoding: .utf8) ?? ""
             sleepState = parseDisableSleep(from: text)
+            syncAwakeGuard()
         } catch {
+            stopAwakeGuard()
             sleepState = .unknown
         }
+    }
+
+    private func syncAwakeGuard() {
+        switch sleepState {
+        case .on:
+            startAwakeGuard()
+        case .off, .unknown:
+            stopAwakeGuard()
+        }
+        updateUI()
+    }
+
+    private func startAwakeGuard() {
+        if let process = caffeinateProcess, process.isRunning {
+            return
+        }
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/caffeinate")
+        process.arguments = ["-dimsu"]
+        process.standardOutput = Pipe()
+        process.standardError = Pipe()
+
+        do {
+            try process.run()
+            caffeinateProcess = process
+        } catch {
+            caffeinateProcess = nil
+            showAlert(title: "Cannot start Awake Guard", message: error.localizedDescription)
+        }
+    }
+
+    private func stopAwakeGuard() {
+        guard let process = caffeinateProcess else {
+            return
+        }
+
+        if process.isRunning {
+            process.terminate()
+            process.waitUntilExit()
+        }
+        caffeinateProcess = nil
+    }
+
+    private func isAwakeGuardRunning() -> Bool {
+        if let process = caffeinateProcess {
+            return process.isRunning
+        }
+        return false
     }
 
     private func parseDisableSleep(from text: String) -> SleepState {
@@ -148,6 +209,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             turnOnItem.isEnabled = true
             turnOffItem.isEnabled = true
         }
+
+        awakeGuardItem.title = isAwakeGuardRunning() ? "Awake Guard: ON (caffeinate)" : "Awake Guard: OFF"
+
         if let button = statusItem.button {
             let symbol: String
             switch sleepState {
