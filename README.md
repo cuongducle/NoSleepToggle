@@ -11,6 +11,22 @@ When OFF, it restores:
 - `pmset -a disablesleep 0`
 - stops Awake Guard
 
+## Use Cases
+
+- Prevent sleep during long builds
+- Prevent sleep during downloads
+- Keep Mac awake during SSH sessions
+
+## GitHub Topics
+
+Suggested repository topics:
+- `macos`
+- `menu-bar`
+- `utility`
+- `developer-tools`
+- `nosleep`
+- `swift`
+
 ## Quick Install (recommended)
 
 1. Download latest `.dmg` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
