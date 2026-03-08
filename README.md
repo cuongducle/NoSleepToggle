@@ -27,9 +27,9 @@ When `No Sleep` is ON, the app applies:
 ## Install
 
 1. Download the latest `.zip` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
-2. Extract it and move `NoSleepToggle.app` into `Applications`.
-3. Launch the app and click the menu bar icon.
-4. Turn `No Sleep` ON when you want your Mac to stay awake.
+2. Extract the `.zip` to get `NoSleepToggle.app`.
+3. Open the app directly, or move it anywhere you want first.
+4. Click the menu bar icon and turn `No Sleep` ON when you want your Mac to stay awake.
 
 ## Menu
 
@@ -48,14 +48,21 @@ Actual behavior can still depend on your specific Mac model, power setup, and ma
 
 Current builds are distributed as a `.zip` with an unsigned app bundle.
 
+Why macOS may say the app cannot be opened:
+- The release is not signed with Apple Developer ID
+- The release is not notarized by Apple
+- macOS Gatekeeper treats apps downloaded from the internet more strictly
+
 If macOS blocks the app:
 1. Right-click `NoSleepToggle.app` in Finder and choose `Open`.
 2. If needed, go to `System Settings > Privacy & Security` and choose `Open Anyway`.
 
+If you moved the app somewhere else, use that path instead of `Applications` in the command below.
+
 Optional terminal workaround:
 
 ```bash
-xattr -dr com.apple.quarantine /Applications/NoSleepToggle.app
+xattr -dr com.apple.quarantine /path/to/NoSleepToggle.app
 ```
 
 ## Build From Source
