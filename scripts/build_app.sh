@@ -8,6 +8,8 @@ APP_DIR="$ROOT_DIR/dist/$APP_NAME.app"
 BIN_DIR="$APP_DIR/Contents/MacOS"
 RES_DIR="$APP_DIR/Contents/Resources"
 ICON_PATH="$ROOT_DIR/assets/$APP_NAME.icns"
+APP_VERSION="${APP_VERSION:-1.0}"
+APP_BUILD="${APP_BUILD:-1}"
 
 cd "$ROOT_DIR"
 if [[ ! -f "$ICON_PATH" ]]; then
@@ -43,9 +45,9 @@ cat > "$APP_DIR/Contents/Info.plist" <<'PLIST'
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>${APP_VERSION}</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>${APP_BUILD}</string>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
     <key>LSUIElement</key>

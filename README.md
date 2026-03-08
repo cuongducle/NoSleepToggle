@@ -77,6 +77,22 @@ chmod +x scripts/create_dmg.sh
 Output DMG:
 - `/Users/cuong/workspace/NoSleepToggle/release/NoSleepToggle.dmg`
 
+## Release
+
+GitHub Actions is configured to build and publish a release whenever you push a tag that starts with `v`.
+
+Example:
+
+```bash
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+The workflow will:
+- build `NoSleepToggle.app`
+- create a release DMG
+- upload both `.zip` and `.dmg` assets to the GitHub Release page
+
 ## Optional: Sign + Notarize (paid Apple Developer account)
 
 Prerequisites:
