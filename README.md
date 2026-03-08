@@ -1,52 +1,54 @@
 # NoSleepToggle
 
-Small macOS menu bar app to quickly turn `No Sleep` on/off.
-The menu now always shows a simple `ON/OFF` state (no `UNKNOWN` label).
+NoSleepToggle is a small macOS menu bar app that keeps your Mac awake with one click.
 
-When ON, the app applies:
+The main goal is simple: start a long task, turn `No Sleep` on, close your Mac, and let it keep running instead of going to sleep.
+
+## What It Does
+
+- Keeps your Mac awake during long-running work
+- Helps downloads, builds, scripts, and SSH sessions continue in the background
+- Lives in the menu bar so you can turn it on or off instantly
+- Can start automatically at login
+
+When `No Sleep` is ON, the app applies:
 - `pmset -a disablesleep 1`
-- `caffeinate -dimsu` (Awake Guard)
+- `caffeinate -dimsu`
 
-When OFF, it restores:
-- `pmset -a disablesleep 0`
-- stops Awake Guard
+## Best Use Cases
 
-## Use Cases
+- Close your Mac and let a long build keep running
+- Keep large downloads from stopping halfway
+- Keep remote SSH or terminal work alive
+- Prevent sleep during presentations, installs, or background jobs
 
-- Prevent sleep during long builds
-- Prevent sleep during downloads
-- Keep Mac awake during SSH sessions
+## Install
 
-## GitHub Topics
+1. Download the latest `.dmg` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
+2. Open the DMG and drag `NoSleepToggle.app` into `Applications`.
+3. Launch the app and click the menu bar icon.
+4. Turn `No Sleep` ON when you want your Mac to stay awake.
 
-Suggested repository topics:
-- `macos`
-- `menu-bar`
-- `utility`
-- `developer-tools`
-- `nosleep`
-- `swift`
+## Menu
 
-## Quick Install (recommended)
-
-1. Download latest `.dmg` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
-2. Open DMG and drag `NoSleepToggle.app` into `Applications`.
-3. Open app and click the menu bar icon (top-right).
-4. The app auto-enables `Launch at Login` so it starts on the next login.
-
-Menu actions:
-- `No Sleep: ON/OFF` (single toggle button)
+- `No Sleep: ON/OFF`
 - `Launch at Login: ON/OFF`
 - `Refresh status`
 - `Quit`
 
-## First Launch Warning (unsigned app)
+## Important Note
 
-This project currently ships as unsigned/not-notarized builds.
+This app is meant for people who want their Mac to keep working instead of sleeping during long tasks, including the common workflow of closing the lid and walking away.
 
-If macOS blocks launch:
-1. Right-click `NoSleepToggle.app` in Finder -> `Open`.
-2. If still blocked: `System Settings > Privacy & Security` -> `Open Anyway`.
+Actual behavior can still depend on your specific Mac model, power setup, and macOS behavior.
+
+## First Launch
+
+Current builds may be unsigned.
+
+If macOS blocks the app:
+1. Right-click `NoSleepToggle.app` in Finder and choose `Open`.
+2. If needed, go to `System Settings > Privacy & Security` and choose `Open Anyway`.
 
 Optional terminal workaround:
 
@@ -58,61 +60,15 @@ xattr -dr com.apple.quarantine /Applications/NoSleepToggle.app
 
 ```bash
 cd /Users/cuong/workspace/NoSleepToggle
-chmod +x scripts/build_app.sh
 ./scripts/build_app.sh
 open /Users/cuong/workspace/NoSleepToggle/dist/NoSleepToggle.app
 ```
 
-Output app:
-- `/Users/cuong/workspace/NoSleepToggle/dist/NoSleepToggle.app`
+## Developer Release
 
-## Build DMG
-
-```bash
-cd /Users/cuong/workspace/NoSleepToggle
-chmod +x scripts/create_dmg.sh
-./scripts/create_dmg.sh
-```
-
-Output DMG:
-- `/Users/cuong/workspace/NoSleepToggle/release/NoSleepToggle.dmg`
-
-## Release
-
-GitHub Actions is configured to build and publish a release whenever you push a tag that starts with `v`.
-
-Example:
+Push a tag that starts with `v` to create a GitHub Release automatically.
 
 ```bash
 git tag v1.0.1
 git push origin v1.0.1
-```
-
-The workflow will:
-- build `NoSleepToggle.app`
-- create a release DMG
-- upload both `.zip` and `.dmg` assets to the GitHub Release page
-
-## Optional: Sign + Notarize (paid Apple Developer account)
-
-Prerequisites:
-- `Developer ID Application` certificate in keychain
-- notary profile configured with `notarytool`
-
-Store credentials once:
-
-```bash
-xcrun notarytool store-credentials "NoSleepNotary" \
-  --apple-id "YOUR_APPLE_ID" \
-  --team-id "YOUR_TEAM_ID"
-```
-
-Run signing pipeline:
-
-```bash
-cd /Users/cuong/workspace/NoSleepToggle
-chmod +x scripts/sign_and_notarize.sh
-CODESIGN_IDENTITY="Developer ID Application: YOUR_NAME (TEAMID)" \
-NOTARY_PROFILE="NoSleepNotary" \
-./scripts/sign_and_notarize.sh
 ```
