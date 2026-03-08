@@ -26,8 +26,8 @@ When `No Sleep` is ON, the app applies:
 
 ## Install
 
-1. Download the latest `.dmg` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
-2. Open the DMG and drag `NoSleepToggle.app` into `Applications`.
+1. Download the latest `.zip` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
+2. Extract it and move `NoSleepToggle.app` into `Applications`.
 3. Launch the app and click the menu bar icon.
 4. Turn `No Sleep` ON when you want your Mac to stay awake.
 
@@ -46,7 +46,7 @@ Actual behavior can still depend on your specific Mac model, power setup, and ma
 
 ## First Launch
 
-Current builds may be unsigned.
+Current builds are distributed as a `.zip` with an unsigned app bundle.
 
 If macOS blocks the app:
 1. Right-click `NoSleepToggle.app` in Finder and choose `Open`.
@@ -69,6 +69,7 @@ open /Users/cuong/workspace/NoSleepToggle/dist/NoSleepToggle.app
 ## Developer Release
 
 Push a tag that starts with `v` to create a GitHub Release automatically.
+The release uploads a `.zip` containing `NoSleepToggle.app`.
 
 ```bash
 git tag v1.0.1
