@@ -2,11 +2,12 @@
 
 NoSleepToggle is a small macOS menu bar app that keeps your Mac awake with one click.
 
-The main goal is simple: start a long task, turn `No Sleep` on, close your Mac, and let it keep running instead of going to sleep.
+The main goal is simple: keep your personal Mac running in the background for long tasks, especially when you want to host OpenClaw and do not want the machine to sleep after you close the lid.
 
 ## What It Does
 
 - Keeps your Mac awake during long-running work
+- Useful for hosting OpenClaw on your personal Mac
 - Helps downloads, builds, scripts, and SSH sessions continue in the background
 - Lives in the menu bar so you can turn it on or off instantly
 - Can start automatically at login
@@ -17,6 +18,7 @@ When `No Sleep` is ON, the app applies:
 
 ## Best Use Cases
 
+- Host OpenClaw on your personal Mac and keep it running in the background
 - Close your Mac and let a long build keep running
 - Keep large downloads from stopping halfway
 - Keep remote SSH or terminal work alive
@@ -38,7 +40,7 @@ When `No Sleep` is ON, the app applies:
 
 ## Important Note
 
-This app is meant for people who want their Mac to keep working instead of sleeping during long tasks, including the common workflow of closing the lid and walking away.
+This app is meant for people who want their Mac to keep working instead of sleeping during long tasks, especially if the machine is being used as a lightweight personal host for something like OpenClaw.
 
 Actual behavior can still depend on your specific Mac model, power setup, and macOS behavior.
 
