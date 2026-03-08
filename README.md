@@ -16,9 +16,11 @@ When OFF, it restores:
 1. Download latest `.dmg` from [Releases](https://github.com/cuongducle/NoSleepToggle/releases).
 2. Open DMG and drag `NoSleepToggle.app` into `Applications`.
 3. Open app and click the menu bar icon (top-right).
+4. The app auto-enables `Launch at Login` so it starts on the next login.
 
 Menu actions:
 - `No Sleep: ON/OFF` (single toggle button)
+- `Launch at Login: ON/OFF`
 - `Refresh status`
 - `Quit`
 
