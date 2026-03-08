@@ -44,46 +44,58 @@ defer {
 let context = graphics.cgContext
 
 let rect = NSRect(x: 0, y: 0, width: width, height: height)
-
-let backgroundPath = NSBezierPath(roundedRect: rect.insetBy(dx: 64, dy: 64), xRadius: 220, yRadius: 220)
-let gradient = NSGradient(colors: [
-    NSColor(calibratedRed: 0.10, green: 0.22, blue: 0.55, alpha: 1.0),
-    NSColor(calibratedRed: 0.02, green: 0.12, blue: 0.32, alpha: 1.0)
+let insetRect = rect.insetBy(dx: 64, dy: 64)
+let backgroundPath = NSBezierPath(roundedRect: insetRect, xRadius: 220, yRadius: 220)
+let backgroundGradient = NSGradient(colors: [
+    NSColor(calibratedRed: 0.04, green: 0.09, blue: 0.20, alpha: 1.0),
+    NSColor(calibratedRed: 0.07, green: 0.20, blue: 0.33, alpha: 1.0),
+    NSColor(calibratedRed: 0.03, green: 0.12, blue: 0.24, alpha: 1.0)
 ])!
-gradient.draw(in: backgroundPath, angle: 270)
+backgroundGradient.draw(in: backgroundPath, angle: 90)
 
 context.saveGState()
 backgroundPath.addClip()
 
-let glowColor = NSColor(calibratedRed: 0.33, green: 0.62, blue: 1.0, alpha: 0.45)
-context.setShadow(offset: CGSize(width: 0, height: -8), blur: 28, color: glowColor.cgColor)
+let haloPath = NSBezierPath(ovalIn: NSRect(x: 210, y: 230, width: 620, height: 620))
+let haloGradient = NSGradient(colors: [
+    NSColor(calibratedRed: 0.21, green: 0.53, blue: 0.82, alpha: 0.30),
+    NSColor(calibratedRed: 0.21, green: 0.53, blue: 0.82, alpha: 0.0)
+])!
+haloGradient.draw(in: haloPath, relativeCenterPosition: .zero)
 
-let boltPath = NSBezierPath()
-boltPath.move(to: NSPoint(x: 560, y: 740))
-boltPath.line(to: NSPoint(x: 470, y: 535))
-boltPath.line(to: NSPoint(x: 595, y: 535))
-boltPath.line(to: NSPoint(x: 455, y: 300))
-boltPath.line(to: NSPoint(x: 520, y: 500))
-boltPath.line(to: NSPoint(x: 415, y: 500))
-boltPath.close()
-NSColor(calibratedRed: 0.95, green: 0.98, blue: 1.0, alpha: 0.98).setFill()
-boltPath.fill()
+let moonPath = NSBezierPath()
+moonPath.appendOval(in: NSRect(x: 220, y: 235, width: 440, height: 440))
+moonPath.appendOval(in: NSRect(x: 390, y: 300, width: 310, height: 310))
+moonPath.windingRule = .evenOdd
+NSColor(calibratedRed: 0.96, green: 0.97, blue: 0.93, alpha: 1.0).setFill()
+moonPath.fill()
+
+let shadow = NSShadow()
+shadow.shadowColor = NSColor(calibratedRed: 1.0, green: 0.45, blue: 0.16, alpha: 0.35)
+shadow.shadowBlurRadius = 34
+shadow.shadowOffset = NSSize(width: 0, height: -8)
+shadow.set()
+
+let slashPath = NSBezierPath()
+slashPath.lineCapStyle = .round
+slashPath.lineWidth = 96
+slashPath.move(to: NSPoint(x: 700, y: 760))
+slashPath.line(to: NSPoint(x: 335, y: 295))
+NSColor(calibratedRed: 1.0, green: 0.56, blue: 0.18, alpha: 1.0).setStroke()
+slashPath.stroke()
+
+let highlightPath = NSBezierPath()
+highlightPath.lineCapStyle = .round
+highlightPath.lineWidth = 22
+highlightPath.move(to: NSPoint(x: 660, y: 730))
+highlightPath.line(to: NSPoint(x: 390, y: 385))
+NSColor(calibratedRed: 1.0, green: 0.86, blue: 0.45, alpha: 0.9).setStroke()
+highlightPath.stroke()
 context.restoreGState()
 
-if let symbol = NSImage(
-    systemSymbolName: "moon.zzz.fill",
-    accessibilityDescription: "NoSleep"
-) {
-    let config = NSImage.SymbolConfiguration(pointSize: 340, weight: .regular)
-    let symbolImage = symbol.withSymbolConfiguration(config) ?? symbol
-    let symbolRect = NSRect(x: 180, y: 250, width: 420, height: 420)
-    NSColor.white.set()
-    symbolImage.draw(in: symbolRect)
-}
-
-let borderPath = NSBezierPath(roundedRect: rect.insetBy(dx: 64, dy: 64), xRadius: 220, yRadius: 220)
-NSColor(calibratedWhite: 1.0, alpha: 0.22).setStroke()
-borderPath.lineWidth = 12
+let borderPath = NSBezierPath(roundedRect: insetRect, xRadius: 220, yRadius: 220)
+NSColor(calibratedWhite: 1.0, alpha: 0.14).setStroke()
+borderPath.lineWidth = 10
 borderPath.stroke()
 
 guard let pngData = rep.representation(using: .png, properties: [:]) else {
